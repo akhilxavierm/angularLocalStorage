@@ -83,11 +83,12 @@ localStorageApp.service('localStorageService',function () {
     this.removeLocalStorage = function (itemName) {
         localStorage.removeItem(itemName);
     };
-    this.addLocalstorageListner = function (callback) {
+    this.addLocalstorageListener = function (callback) {
         window.addEventListener('storage', callback, false);
     }
-    this.removeLocalstorageListner = function (callback) {
+    this.removeLocalstorageListener = function (callback) {
         window.removeEventListener('storage',callback,false);
     }
 
 });
+
