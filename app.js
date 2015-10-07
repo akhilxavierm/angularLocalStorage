@@ -6,89 +6,82 @@
 
 var localStorageApp = angular.module('localStorageApp', []);
 
-localStorageApp.service('localStorageService',function () {
+localStorageApp.service('localStorageService', function() {
 
     var that = this;
     var hasOwnProperty = Object.prototype.hasOwnProperty;
-    var isEmptyObj = function (obj) {
+    var isEmptyObj = function(obj) {
         if (obj == null) return true;
         if (obj.length > 0) {
             return false;
         }
         if (obj == null) return true;
-        if (obj.length > 0)    return false;
-        if (obj.length === 0)  return true;
+        if (obj.length > 0) return false;
+        if (obj.length === 0) return true;
         for (var key in obj) {
             if (hasOwnProperty.call(obj, key))
                 return false;
         }
         return false;
     }
-    var checkExpiry = function (retrievedItem, itemName) {
+    var checkExpiry = function(retrievedItem, itemName) {
         var storedTime = retrievedItem.time;
         var current_time = new Date();
         var retrivedTime = current_time.getTime();
         var time_difference = Math.floor((retrivedTime - storedTime) / 1000);
         if (time_difference > 120) {
             that.removeLocalStorage(itemName);
-        }
-        else {
+        } else {
             return retrievedItem;
         }
     };
-    this.setItem = function (itemName, obj) {
+    this.setItem = function(itemName, obj) {
         var storedTime = new Date();
         if (!isEmptyObj(obj)) {
             obj.time = storedTime.getTime();
-            try{
+            try {
                 localStorage.setItem(itemName, angular.toJson(obj));
-            }
-            catch(e){
-                console.log("local storge is not supported--"+e);
+            } catch (e) {
+                console.log("local storge is not supported--" + e);
             }
 
         }
     };
-    this.getItem = function (itemName) {
+    this.getItem = function(itemName) {
         try {
             var retrievedItem = angular.fromJson(localStorage.getItem(itemName));
-        }
-        catch(e){
-            console.log("local storge is not supported--"+e);
+        } catch (e) {
+            console.log("local storge is not supported--" + e);
         }
         if (!isEmptyObj(retrievedItem)) {
             var parsedRetrivedItem = retrievedItem;
             return parsedRetrivedItem;
-        }
-        else {
+        } else {
             that.removeLocalStorage();
         }
     };
-    this.getItemWithExpireCheck = function (itemName) {
+    this.getItemWithExpireCheck = function(itemName) {
         try {
             var retrievedItem = angular.fromJson(localStorage.getItem(itemName));
-        }
-        catch(e){
-            console.log("local storge is not supported--"+e);
+        } catch (e) {
+            console.log("local storge is not supported--" + e);
         }
         if (!isEmptyObj(retrievedItem)) {
             var retrivedLocalStorage = checkExpiry(retrievedItem, itemName);
             return retrivedLocalStorage;
-        }
-        else {
+        } else {
             that.removeLocalStorage();
         }
 
     };
-    this.removeLocalStorage = function (itemName) {
+    this.removeLocalStorage = function(itemName) {
         localStorage.removeItem(itemName);
     };
-    this.addLocalstorageListener = function (callback) {
+    this.addLocalstorageListener = function(callback) {
         window.addEventListener('storage', callback, false);
     }
-    this.removeLocalstorageListener = function (callback) {
-        window.removeEventListener('storage',callback,false);
+    this.removeLocalstorageListener = function(callback) {
+        window.removeEventListener('storage', callback, false);
     }
 
 });
-
